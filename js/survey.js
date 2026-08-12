@@ -338,14 +338,19 @@ function renderSurvey() {
     pill.textContent = `${i+1} · ${scaleLabels[i]}`;
   });
 
-  // Mostrar/ocultar leyenda
-  if (surveyData.showScale === false) {
+  const legendEl = document.querySelector('.scale-legend');
+  if (legendEl) legendEl.textContent = surveyData.scaleLegendLabel || 'Escala de valoración:';
+
+  // Ocultar leyenda si no hay preguntas tipo escala, o si showScale===false
+  const hasScaleQuestion = (surveyData.aspects || []).some(a =>
+    a.active && (a.questions || []).some(q => (typeof q === 'string' ? 'scale' : (q.type || 'scale')) === 'scale')
+  );
+  if (surveyData.showScale === false || !hasScaleQuestion) {
     const scaleWrap = document.querySelector('.scale-legend');
     const pillsWrap = document.querySelector('.scale-pills');
     if (scaleWrap) scaleWrap.style.display = 'none';
     if (pillsWrap) pillsWrap.style.display = 'none';
   }
-
   const container = document.getElementById('aspectsContainer');
   container.innerHTML = '';
 
